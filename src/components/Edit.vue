@@ -1,10 +1,38 @@
 <script setup>
-const handleUpdateForm = () => {
-  console.log("updated");
+import useStudent from "../composables/studentApi";
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+const {
+  studentAllData,
+  err,
+  singleStudentDataFun,
+  updateStudentData,
+  statusCode,
+} = useStudent();
+
+const route = useRoute();
+onMounted(() => {
+  singleStudentDataFun(route.params.id);
+});
+
+const handleUpdateForm = async () => {
+  await updateStudentData(route.params.id, studentAllData.value);
 };
 </script>
 <template>
-  <form @submit.prevent="handleUpdateForm" id="AddStudentForm" class="w-full">
+  <div
+    v-if="err"
+    class="bg-red-200 text-red-400 p-2 font-medium text-sm"
+    role="alert"
+  >
+    !Oops Error encountered: {{ err }}
+  </div>
+  <form
+    @submit.prevent="handleUpdateForm"
+    id="AddStudentForm"
+    class="w-full"
+    v-if="!err"
+  >
     <div class="flex items-center m-6">
       <div class="w-1/5 font-medium">
         <label for="stuId">ID : </label>
@@ -18,6 +46,7 @@ const handleUpdateForm = () => {
           placeholder="Enter your name"
           disabled
           readonly
+          v-model.trim="studentAllData.id"
         />
       </div>
     </div>
@@ -32,6 +61,7 @@ const handleUpdateForm = () => {
           id="stuName"
           required
           placeholder="Enter your name"
+          v-model.trim="studentAllData.studentName"
         />
       </div>
     </div>
@@ -47,6 +77,7 @@ const handleUpdateForm = () => {
           id="stuEmail"
           required
           placeholder="Enter your Email"
+          v-model.trim="studentAllData.studentEmail"
         />
       </div>
     </div>
@@ -67,4 +98,12 @@ const handleUpdateForm = () => {
       </RouterLink>
     </div>
   </form>
+
+  <div
+    v-if="statusCode === 200"
+    class="bg-green-100 text-green-400 p-2 font-medium text-sm"
+    role="alert"
+  >
+    updated Successfully
+  </div>
 </template>

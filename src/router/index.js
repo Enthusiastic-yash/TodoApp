@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
 import Add from "../components/Add.vue";
 import Edit from "../components/Edit.vue";
 import List from "../components/List.vue";
@@ -11,8 +10,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
-      component: Home,
+      redirect: { name: "List" },
     },
     {
       path: "/Add",

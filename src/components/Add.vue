@@ -1,6 +1,9 @@
 <script setup>
 import { RouterLink } from "vue-router";
 import { reactive } from "vue";
+import useStudent from "../composables/studentApi";
+
+const { createStudent, studentAllData, err, statusCode } = useStudent();
 
 const formData = reactive({
   studentName: "",
@@ -8,7 +11,10 @@ const formData = reactive({
 });
 
 const handleAddStudentForm = async () => {
-  console.log("form Data", formData);
+  await createStudent(formData);
+  if (statusCode.value === 201) {
+    document.getElementById("AddStudentForm").reset();
+  }
 };
 </script>
 <template>
@@ -68,6 +74,20 @@ const handleAddStudentForm = async () => {
           Back
         </button>
       </RouterLink>
+    </div>
+    <div
+      v-if="err"
+      class="bg-red-200 text-red-400 p-2 font-medium text-sm"
+      role="alert"
+    >
+      !Oops Error encountered: {{ err }}
+    </div>
+    <div
+      v-if="statusCode === 201"
+      class="bg-green-100 text-green-400 p-2 font-medium text-sm"
+      role="alert"
+    >
+      created Successfully
     </div>
   </form>
 </template>
